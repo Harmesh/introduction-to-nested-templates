@@ -1,0 +1,28 @@
+{
+    "$schema":
+    "https://schema.management.azure.com/schemas/2015­01­01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "baseUri":"https://raw.githubusercontent.com/Harmesh/master/introduction­tonested­templates/master",
+        "ADInstallScript":"[concat(variables('baseUri'),'/','script­extensions/deploy­ad.ps1')]",
+        "ADJoinScript":"[concat(variables('baseUri'),'/','script­extensions/domain­join.ps1')]"
+    },
+    "resources": [ {
+        "name": "VirtualNetwork",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2016­09­01",
+        "dependsOn": [ ],
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+        "uri": "[concat(variables('baseUri'), '/', 'nested­templates/vnet.json')]",
+        "contentVersion": "1.0.0.0"
+        }
+        }
+        }
+    ],
+    "outputs": {
+    }
+    }

@@ -205,7 +205,67 @@
           "properties": {
               "publicIPAllocationMethod": "Dynamic"
           }
-      }
+      },
+
+      {
+        "name": "ActiveDirectory",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2016­09­01",
+        "dependsOn": [
+        "Microsoft.Resources/deployments/VirtualNetwork"
+        ],
+        "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+        "uri": "[concat(variables('baseUri'), '/', 'nested­templates/activedirectory.json')]",
+        "contentVersion": "1.0.0.0"
+        },
+        "parameters":{
+        "adminUserName":{"value": "[parameters('adminUserName')]"},
+        "adminPassword":{"value": "[parameters('adminPassword')]"},
+        "domainName":{"value": "[parameters('domainName')]"},
+        "adInstallScriptUrl":{"value": "[variables('ADInstallScript')]"}
+        }
+        }
+        },
+
+        {
+          "name": "VirtualNetworkWithDNS",
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2016­09­01",
+          "dependsOn": [
+          "Microsoft.Resources/deployments/ActiveDirectory"
+          ],
+          "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+          "uri": "[concat(variables('baseUri'), '/', 'nested­templates/vnet­withdns.json')]",
+          "contentVersion": "1.0.0.0"
+          }
+          }
+          },
+
+          {
+            "name": "MemberServer",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016Â­09Â­01",
+            "dependsOn": [
+            "Microsoft.Resources/deployments/VirtualNetworkWithDNS"
+            ],
+            "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+            "uri": "[concat(variables('baseUri'), '/', 'nestedÂ­templates/memberserver.json')]",
+            "contentVersion": "1.0.0.0"
+            },
+            "parameters":{
+            "adminUserName":{"value": "[parameters('adminUserName')]"},
+            "adminPassword":{"value": "[parameters('adminPassword')]"},
+            "domainName":{"value": "[parameters('domainName')]"},
+            "DomainJoinscriptUrl":{"value": "[variables('ADJoinScript')]"}
+            }
+            }
+            }
   ],
     "outputs": {}
   }
